@@ -33,7 +33,7 @@ await mkdir("_site", { recursive: true });
 await writeFile("_site/index.html", html);
 await copyFile("config.json", "_site/config.json");
 
-for (const f of ["CNAME", ".nojekyll"]) {
+for (const f of ["CNAME", ".nojekyll", "pfp.png"]) {
     try { await copyFile(f, `_site/${f}`); } catch { /* optional */ }
 }
 

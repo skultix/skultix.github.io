@@ -1,0 +1,47 @@
+name: Refresh profile picture
+
+on:
+  schedule:
+    - cron: "17 6 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: refresh-pfp
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Fetch GitHub avatar and detect changes
+        id: fetch
+        run: |
+          set -euo pipefail
+          curl -sSLf "https://github.com/${{ github.repository_owner }}.png?size=460" -o /tmp/pfp-new.png
+          if [ -f pfp.png ] && cmp -s /tmp/pfp-new.png pfp.png; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Avatar unchanged; nothing to do."
+          else
+            mv /tmp/pfp-new.png pfp.png
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Avatar changed; will commit and trigger deploy."
+          fi
+
+      - name: Commit and trigger deploy
+        if: steps.fetch.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pfp.png
+          git commit -m "chore: refresh github avatar"
+          git push
+          gh workflow run deploy.yml
