@@ -1,0 +1,31 @@
+{
+	"title": "Marley Reeves",
+	"bio": "Professional Keyboard Basher",
+	"prompt": "marley@skultix",
+	"links": [
+		{
+			"key": "github",
+			"url": "https://github.com/skultix",
+			"label": "github.com/skultix",
+			"icon": "nf-fa-github"
+		},
+		{
+			"key": "gitlab",
+			"url": "https://gitlab.com/skultix",
+			"label": "gitlab.com/skultix",
+			"icon": "nf-fa-gitlab"
+		},
+		{
+			"key": "linkedin",
+			"url": "https://www.linkedin.com/in/marleyreeves",
+			"label": "linkedin.com/in/marleyreeves",
+			"icon": "nf-fa-linkedin"
+		},
+		{
+			"key": "email",
+			"url": "mailto:contact@skultix.sh",
+			"label": "contact@skultix.sh",
+			"icon": "nf-fa-envelope"
+		}
+	]
+}
