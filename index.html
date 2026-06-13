@@ -134,67 +134,12 @@
         @media (prefers-reduced-motion: reduce) {
             .cursor { animation: none; }
         }
-        .error {
-            color: #f7768e;
-            white-space: pre-wrap;
-        }
     </style>
 </head>
 <body>
     <main>
         <img class="pfp" src="/pfp.png" alt="" decoding="async" onerror="this.remove()">
-        <section id="terminal" aria-busy="true"></section>
+        <section id="terminal"></section>
     </main>
-    <script>
-        const ESCAPE = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
-        const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ESCAPE[c]);
-
-        const promptHTML = (prompt) =>
-            `<span class="prompt-host">${esc(prompt)}</span><span class="prompt-tail">:~$ </span>`;
-
-        const iconHTML = (icon) =>
-            icon ? `<i class="nf ${esc(icon)}" aria-hidden="true"></i>` : "";
-
-        const linkHTML = (link) =>
-            `<div class="line out">` +
-                `<span class="key">${esc(link.key)}</span>` +
-                `<a href="${esc(link.url)}" rel="me">${iconHTML(link.icon)}${esc(link.label)}</a>` +
-            `</div>`;
-
-        async function render() {
-            const main = document.getElementById("terminal");
-            const cfg = await fetch("config.json", { cache: "no-cache" }).then(r => {
-                if (!r.ok) throw new Error(`config.json: ${r.status}`);
-                return r.json();
-            });
-
-            document.title = cfg.title;
-            document.querySelector('meta[name="description"]').content = `${cfg.title} — ${cfg.bio}.`;
-
-            const maxKeyLen = Math.max(0, ...cfg.links.map(l => (l.key || "").length));
-            document.documentElement.style.setProperty("--key-width", `${maxKeyLen + 2}ch`);
-
-            const p = promptHTML(cfg.prompt);
-            const parts = [
-                `<div class="line">${p}<span class="cmd">whoami</span></div>`,
-                `<div class="line out"><span class="name">${esc(cfg.title)}</span></div>`,
-                `<div class="line out tag">${esc(cfg.bio)}</div>`,
-                `<div class="blank"></div>`,
-                `<div class="line">${p}<span class="cmd">links</span></div>`,
-                ...cfg.links.map(linkHTML),
-                `<div class="blank"></div>`,
-                `<div class="line">${p}<span class="cursor" aria-hidden="true">▊</span></div>`,
-            ];
-
-            main.innerHTML = parts.join("");
-            main.removeAttribute("aria-busy");
-        }
-
-        render().catch(err => {
-            const main = document.getElementById("terminal");
-            main.innerHTML = `<div class="error">failed to load config.json\n${esc(err.message)}</div>`;
-            main.removeAttribute("aria-busy");
-        });
-    </script>
 </body>
 </html>
